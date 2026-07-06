@@ -1,0 +1,33 @@
+#cloud-config
+hostname: prometheus
+fqdn: prometheus.lab
+ssh_pwauth: True
+
+# Modificamos el usuario por defecto del sistema (ubuntu)
+user:
+  name: ubuntu
+  lock_passwd: false
+
+# Definimos los usuarios del sistema
+users:
+  - default
+  - name: laboratorio
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: [sudo, admin]
+    shell: /bin/bash
+    lock_passwd: false
+
+# Aquí centralizamos de forma limpia el cambio de contraseñas para ambos usuarios
+chpasswd:
+  list: |
+    ubuntu:Pwd123!
+    laboratorio:$6$RlPGYuq3r2/e6O4M$k2icr.2RXN75qQjnWH/vTIBtRo8a4yJ.cEptj137iyI.B0ipGJ5IOwv5AhW334kh.9Cw9uAwtaT9NjgeKPtec1
+  expire: False
+
+runcmd:
+  - apt-get update
+  - apt-get install -y prometheus
+  - [ systemctl, restart, prometheus ]
+  
+  
+
