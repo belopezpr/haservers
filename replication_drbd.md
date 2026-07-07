@@ -5,15 +5,23 @@ sudo apt install drbd-utils
 sudo apt install resource-agents-base resource-agents-extra resource-agents-common -y
 
 ```
+* nota instalar el modulo del kernel no viene predefinido por ser una imagen minima la que se usa de ubuntu
+```
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:linbit/linbit-drbd9-stack
+sudo apt update
+sudo apt install -y drbd-dkms linux-headers-generic
+sudo modprobe drbd
+```
 
-2. Acceder en el directorio de configuración de DRBD con el siguiente comando:
+1. Acceder en el directorio de configuración de DRBD con el siguiente comando:
 cd /etc/drbd.d/
-3. Crear un archivo de configuración (/etc/drbd.d/r0.res) que defina el recurso, la
+1. Crear un archivo de configuración (/etc/drbd.d/r0.res) que defina el recurso, la
 partición a replicar y los nodos involucrados. Usar el editor de texto nano para crear
 y editar el archivo de configuración de la siguiente manera:
 sudo nano r0.res
 Esto abrirá un archivo vacío en el editor.
-4. Colocar el siguiente código en el archivo, asegurándose de usar las IPs correctas de
+1. Colocar el siguiente código en el archivo, asegurándose de usar las IPs correctas de
 los nodos (192.168.10.101 y 192.168.10.102) y la partición del nuevo disco
 (/dev/sdb1)
 
