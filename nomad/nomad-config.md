@@ -64,5 +64,66 @@ sudo service consul restart
 sudo service nomad restart
 ```
 
+5. Edirar en el servidor Consul el archivo consul.d
+```
+# sudo nano /etc/consul.d/consul.hcl
+
+server = true
+bootstrap_expect = 1
+data_dir = "/opt/consul"
+bind_addr = "0.0.0.0"
+client_addr = "0.0.0.0"
+
+ui_config {
+  enabled = true
+}
+
+telemetry {
+  prometheus_retention_time = "72h"
+  disable_hostname          = true
+}
+```
+
+6. reiniciar el servicio consul
+`sudo service consul restart`
 
 
+7. Editar en el servidor Vault el archivo consul.d
+```
+# /etc/consul.d/consul.hcl en cada nodo Nomad
+
+data_dir    = "/opt/consul"
+datacenter  = "dc1"
+server      = false  # Mantiene al nodo como cliente, no servidor
+
+# Direcciones de escucha
+bind_addr   = "192.168.122.X" # ip de la vm
+client_addr = "127.0.0.1"    # Permite que Nomad lo encuentre en localhost
+
+# Unirse automáticamente al servidor central de Consul
+retry_join  = ["192.168.122.21"]
+```
+
+8. Editar el servidor Vault el archivo vault.hcl
+```
+# sudo nano /etc/vault.d/vault.hcl
+
+storage "consul" {
+  # Habla con el agente de Consul local en la misma VM
+  address = "127.0.0.1:8500"
+  path    = "vault/"
+}
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+# Apuntar a la IP real de la VM de Vault
+api_addr     = "http://192.168.122.31:8200"
+cluster_addr = "http://192.168.122.31:8201"
+```
+
+9. Reiniciar los servicios en el servidor Vault
+`sudo service consul restart`
+`sudo service vault restart`
