@@ -181,18 +181,6 @@ telemetry {
   publish_node_metrics       = true
 }
 
-plugin "nomad-driver-podman" {
-  config {
-    # Habilita el modo rootless si no usas sudo para Podman
-    # rootless = true
-    
-    # Tiempo de espera para comunicarse con el socket de Podman
-    #socket_timeout = "20s"
-    
-    # Apunta al socket del host montado dentro del contenedor
-    socket_path = "unix:///run/user/1000/podman/podman.sock"
-  }
-}
 ```
 
 12. Reiniciar los servicios nomad y consul en cada cliente Nomad
