@@ -85,9 +85,9 @@ frontend http_front
 
 backend nginx_pool
     balance roundrobin
-    server node01 192.168.132.136:80 check
-    server node02 192.168.132.137:80 check
-    server node03 192.168.132.138:80 check
+    server node01 192.168.152.136:80 check
+    server node02 192.168.152.137:80 check
+    server node03 192.168.152.138:80 check
 EOH
         destination = "local/haproxy.cfg"
       }
