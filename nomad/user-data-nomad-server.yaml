@@ -31,5 +31,6 @@ runcmd:
   - apt-get install -y nomad consul vault
   - [ systemctl, daemon-reload ]
   - [ systemctl, enable, --now, nomad ]
+  - [ systemctl, enable, --now, consul ]
 
 
