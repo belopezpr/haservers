@@ -1,0 +1,35 @@
+#cloud-config
+hostname: nomad-server-01
+fqdn: nomad-server-01.lab
+ssh_pwauth: True
+
+# Modificamos el usuario por defecto del sistema (ubuntu)
+user:
+  name: ubuntu
+  lock_passwd: false
+
+# Definimos los usuarios del sistema
+users:
+  - default
+  - name: laboratorio
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: [sudo, admin]
+    shell: /bin/bash
+    lock_passwd: false
+
+# Aquí centralizamos de forma limpia el cambio de contraseñas para ambos usuarios
+chpasswd:
+  list: |
+    ubuntu:Pwd123!
+    laboratorio:$6$RlPGYuq3r2/e6O4M$k2icr.2RXN75qQjnWH/vTIBtRo8a4yJ.cEptj137iyI.B0ipGJ5IOwv5AhW334kh.9Cw9uAwtaT9NjgeKPtec1
+  expire: False
+
+runcmd:
+  - wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+  - apt-get update
+  - apt-get install -y nomad consul vault
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, --now, nomad ]
+
+
